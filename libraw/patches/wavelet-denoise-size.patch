@@ -1,0 +1,19 @@
+Nautilus Canvas (decided 2026-10-15, docs/DEVELOP_CONTROLS.md decision 16):
+LibRaw 0.22.2's OpenMP wavelet_denoise() -- src/postprocessing/
+postprocessing_aux.cpp, the #else /* LIBRAW_USE_OPENMP */ copy, line 150 --
+allocates and loops with `size` never set; the serial copy sets it at line
+50. With a denoise threshold set it hung or aborted. Backported from
+upstream, LibRaw/LibRaw commit a6268d4652039d72a9df39b26c463782daafed9e
+(2026-09-05), "wavelet denoise/OpenMP case: add missed size
+initialization": the same one line.
+
+--- a/src/postprocessing/postprocessing_aux.cpp
++++ b/src/postprocessing/postprocessing_aux.cpp
+@@ -147,6 +147,7 @@
+   maximum <<= --scale;
+   black <<= scale;
+   FORC4 cblack[c] <<= scale;
++  size = iheight * iwidth;
+   fimg = (float *)malloc((size * 3 + iheight + iwidth) * sizeof *fimg);
+   temp = fimg + size * 3;
+   if ((nc = colors) == 3 && filters)

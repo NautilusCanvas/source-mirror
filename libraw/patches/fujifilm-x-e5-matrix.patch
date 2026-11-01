@@ -1,0 +1,19 @@
+Nautilus Canvas (decided 2026-10-30): LibRaw 0.22.2 has no colour matrix
+for the Fujifilm X-E5, so it converts the RAF's colours as camera RGB and
+a custom white balance is refused; neither 0.22.3 (2026-10-26) nor
+master (2026-10-20) adds one. This adds the row: Adobe's D65
+ColorMatrix for the body, ColorMatrix2 in the DNG Adobe DNG Converter
+18.7 writes from an X-E5 RAF, times 10,000. It is the X-T5 and X-T50's
+row, which LibRaw's table already has.
+
+--- a/src/tables/colordata.cpp
++++ b/src/tables/colordata.cpp
+@@ -530,6 +530,8 @@
+ 	  { 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 } },
+ 	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-E4", 0, 0,
+ 	  { 13426, -6334, -1177, -4244, 12136, 2371, -580, 1303, 5980 } },
++	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-E5", 0, 0,  // same CMs: X-T5 and X-T50
++	  { 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 } },
+ 	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-H1", 0, 0,
+ 	  { 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 } },
+ 	{ LIBRAW_CAMERAMAKER_Fujifilm, "X-H2S", 0, 0,
